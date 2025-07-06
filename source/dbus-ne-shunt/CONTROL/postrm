@@ -8,4 +8,4 @@ if grep -q "^$CONFIG$" "$SERIAL_STARTER_CONFIG"; then
 fi
 
 # Remove configuration files
-rm -r /etc/dbus-ne-shunt
+rm -rf /etc/dbus-ne-shunt
