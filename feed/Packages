@@ -4,8 +4,8 @@ Depends: python3
 Section: utilities
 Architecture: all
 Maintainer: thespinmaster@github.com
-MD5Sum: 38c0ce8f58eef94f5b4921bb997c1624
-Size: 28384
+MD5Sum: f8c3e200de3855ed113a96350da17425
+Size: 28378
 Filename: dbus-ne-shunt_1.0.1_all.ipk
 Source: https://github.com/thespinmaster/venus-os-configuration/tree/main/feed/dbus-ne-shunt
 Description: Adds support for NordElectronica shunt NE196/NE319 board to Venus-OS
@@ -18,8 +18,8 @@ Version: 1.0.0
 Section: utilities
 Architecture: all
 Maintainer: Lucien Denisey <ldenisey@gmail.com>
-MD5Sum: ba19483a576e1097a9c46a4596a0b83e
-Size: 16112
+MD5Sum: 083b6250f8df0b8e33901910d5fa6686
+Size: 16108
 Filename: dbus-relay-board_1.0.0_all.ipk
 Source: https://github.com/thespinmaster/venus-os-configuration/tree/main/feed/dbus-relay-board
 Description: Add support to RS485, RS232 and TTL232 relay boards
@@ -32,8 +32,8 @@ Version: 1.0.0
 Section: utilities
 Architecture: all
 Maintainer: Lucien Denisey <ldenisey@gmail.com>
-MD5Sum: 0974096784f57052956f3cc51d669b88
-Size: 1664
+MD5Sum: 6a25dd0368aa2600fbdbf5ba0bdbd12f
+Size: 1662
 Filename: virtual-gps_1.0.0_all.ipk
 Source: https://github.com/thespinmaster/venus-os-configuration/tree/main/feed/virtual-gps
 Description: Venus OS virtual GPS using NMEA network stream
