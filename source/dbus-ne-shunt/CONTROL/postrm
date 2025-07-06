@@ -7,5 +7,12 @@ if grep -q "^$CONFIG$" "$SERIAL_STARTER_CONFIG"; then
   sed -i "/^$CONFIG$/d" "$SERIAL_STARTER_CONFIG"
 fi
 
+echo "Patching $serial_starter_rules_basepath.patch" 
+
+serial_starter_rules_basepath=/opt/victronenergy/dbus-ne-shunt/patchfiles/serial-starter.rules
+
+if [ -f "$serial_starter_rules_basepath.patch" ]; then
+  patch _R /etc/udev/rules.d/serial-starter.rules $serial_starter_rules_basepath.patch 
+
 # Remove configuration files
 rm -rf /etc/dbus-ne-shunt

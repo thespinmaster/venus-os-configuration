@@ -1,6 +1,7 @@
 #!/bin/sh
 
-python /opt/victronenergy/dbus-ne-shunt/usb-serial-helper.py False /opt/victronenergy/dbus-ne-shunt/patchfiles/serial-starter.rules
+serial_starter_rules_basepath=/opt/victronenergy/dbus-ne-shunt/patchfiles/serial-starter.rules
+python /opt/victronenergy/dbus-ne-shunt/usb-serial-helper.py False $serial_starter_rules_basepath
 
 # Declare service in serial starter conf file
 SERIAL_STARTER_CONFIG='/etc/venus/serial-starter.conf'
@@ -8,4 +9,15 @@ CONFIG='service relay       dbus-ne-shunt'
 if ! grep -q "^$CONFIG$" "$SERIAL_STARTER_CONFIG"; then
   echo "$CONFIG" >> "$SERIAL_STARTER_CONFIG"
 fi
+
+if [ $? != 0 ] ; then
+  echo "Usb serial device not found, exiting."
+  echo "Update '/etc/udev/rules.d/serial-starter.rules' manualy"
+  exit 1
+fi
+
+echo "Patching $serial_starter_rules_basepath.patch" 
+patch /etc/udev/rules.d/serial-starter.rules $serial_starter_rules_basepath.patch 
+
+echo "dbus-ne-shunt installed"
  
