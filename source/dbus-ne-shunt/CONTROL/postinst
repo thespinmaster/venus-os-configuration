@@ -1,6 +1,6 @@
 #!/bin/sh
 
-python /opt/victronenergy/dbus_ne-shunt/usb-serial-helper.py False /opt/victronenergy/dbus-ne-shunt/patchfiles/serial-starter.rules
+python /opt/victronenergy/dbus-ne-shunt/usb-serial-helper.py False /opt/victronenergy/dbus-ne-shunt/patchfiles/serial-starter.rules
 
 # Declare service in serial starter conf file
 SERIAL_STARTER_CONFIG='/etc/venus/serial-starter.conf'
