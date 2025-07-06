@@ -7,5 +7,5 @@ Maintainer: thespinmaster@github.com
 License: MIT
 Architecture: all
 OE: dbus-ne-shunt
-Source: https://github.com/thespinmaster/venus-os-configuration/dbus-ne-shunt
+Source: https://github.com/thespinmaster/venus-os-configuration/tree/main/feed/dbus-ne-shunt
 Depends: python3

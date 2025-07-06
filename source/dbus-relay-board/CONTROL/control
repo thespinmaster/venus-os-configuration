@@ -8,4 +8,4 @@ Maintainer: Lucien Denisey <ldenisey@gmail.com>
 License: MIT
 Architecture: all
 OE: dbus-relay-board
-Source: https://github.com/ldenisey/venus-os-configuration/tree/main/feed/dbus-relay-board
+Source: https://github.com/thespinmaster/venus-os-configuration/tree/main/feed/dbus-relay-board
