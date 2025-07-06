@@ -1,10 +1,10 @@
-.PHONY : ./source/virtual-gps ./source/dbus-relay-board ./dbus-ne-shunt  ./feed/package all
+.PHONY : ./source/virtual-gps ./source/dbus-relay-board ./source/dbus-ne-shunt  ./feed/package all
 
 
 none:
 	@echo "building none... specify the ipk folder to build"
 
-all: virtual-gps dbus-relay-board package
+all: virtual-gps dbus-relay-board dbus-ne-shunt package
 	@echo "building all targets"
 
 virtual-gps:
@@ -21,5 +21,5 @@ dbus-relay-board:
 
 package:
 	@echo "building package index"
-	opkg-make-index ./ -p ./feed/Packages
+	cd ./feed && opkg-make-index ./ -p Packages
 
