@@ -1,4 +1,4 @@
-.PHONY : ./source/virtual-gps ./source/dbus-relay-board  ./feed/package all
+.PHONY : ./source/virtual-gps ./source/dbus-relay-board ./dbus-ne-shunt  ./feed/package all
 
 
 none:
@@ -11,6 +11,9 @@ virtual-gps:
 	@echo "building virtual-gps"
 	cd ./feed && opkg-build ../source/virtual-gps ./
 
+dbus-ne-shunt:
+	@echo "building dbus-ne-shunt"
+        cd ./feed && opkg-build ../source/dbus-ne-shunt ./
 
 dbus-relay-board:
 	@echo "building dbus-relay-board"
