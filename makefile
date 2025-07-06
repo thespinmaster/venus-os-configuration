@@ -13,7 +13,7 @@ virtual-gps:
 
 dbus-ne-shunt:
 	@echo "building dbus-ne-shunt"
-        cd ./feed && opkg-build ../source/dbus-ne-shunt ./
+	cd ./feed && opkg-build ../source/dbus-ne-shunt ./
 
 dbus-relay-board:
 	@echo "building dbus-relay-board"

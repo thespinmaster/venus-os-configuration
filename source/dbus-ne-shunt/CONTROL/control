@@ -5,7 +5,7 @@ Section: utilities
 Priority: optional
 Maintainer: thespinmaster@github.com
 License: MIT
-Architecture: einstine
+Architecture: all
 OE: dbus-ne-shunt
 Source: https://github.com/thespinmaster/venus-os-configuration/dbus-ne-shunt
 Depends: python3
