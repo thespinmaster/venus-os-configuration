@@ -1,18 +1,22 @@
 #!/bin/sh
 
+if [ -f $SERIAL_STARTER_RULE_FILE ]; then
+  # read the rule added to serial-starter.rule by usb-serial-helper.py in postinst
+  # place it into the /etc/udev/rules.d/serial-starter.rules file
+
+  usb_rule=`cat {$SERIAL_STARTER_RULE_FILE}`
+  sed -e "s/{$usb_rule}}//g" -i.backup *
+  
+else
+  echo "warning file not found: {$SERIAL_STARTER_RULE_FILE}"
+fi
+
 # Remove service from serial starter conf file
 SERIAL_STARTER_CONFIG='/etc/venus/serial-starter.conf'
-CONFIG='service relay       dbus-ne-shunt'
+CONFIG='service neshunt       dbus-ne-shunt'
 if grep -q "^$CONFIG$" "$SERIAL_STARTER_CONFIG"; then
   sed -i "/^$CONFIG$/d" "$SERIAL_STARTER_CONFIG"
 fi
-
-echo "Patching $serial_starter_rules_basepath.patch" 
-
-serial_starter_rules_basepath=/opt/victronenergy/dbus-ne-shunt/patchfiles/serial-starter.rules
-
-if [ -f "$serial_starter_rules_basepath.patch" ]; then
-  patch _R /etc/udev/rules.d/serial-starter.rules $serial_starter_rules_basepath.patch 
 
 # Remove configuration files
 rm -rf /etc/dbus-ne-shunt

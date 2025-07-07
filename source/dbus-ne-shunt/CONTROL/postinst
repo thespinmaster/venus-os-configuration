@@ -1,23 +1,36 @@
 #!/bin/sh
 
-serial_starter_rules_basepath=/opt/victronenergy/dbus-ne-shunt/patchfiles/serial-starter.rules
-python /opt/victronenergy/dbus-ne-shunt/usb-serial-helper.py False $serial_starter_rules_basepath
+#serial_starter_rules_file=/opt/victronenergy/dbus-ne-shunt/patchfiles/serial-starter.rules
+
+
+
+DBUS_NE_SHUNT_INSTALL_PATH="/opt/victronenergy/$SERVICE_NAME"
+
+VE_SERVICE_NAME="neshunt"
+SERIAL_STARTER_RULE_FILE="$DBUS_NE_SHUNT_INSTALL_PATH/serial-starter.rule"
+DBUS_MESSAGE_PATH="com.victronenergy.packageManager /GuiEditStatus"
+
+python $DBUS_NE_SHUNT_INSTALL_PATH/usb-serial-helper.py \
+$SERVICE_NAME \
+$SERIAL_STARTER_RULE_FILE \
+$DBUS_MESSAGE_PATH
+
+SERIAL_STARTER_RULES_FILE="/etc/udev/rules.d/serial-starter.rules"
+SERIAL_STARTER_TEXT_MATCH="# The VE USB RS485"
+if [ -f $SERIAL_STARTER_RULE_FILE ]; then
+    # read the rule added to serial-starter.rule by usb-serial-helper.py and
+    # place it into the /etc/udev/rules.d/serial-starter.rules file
+    usb_rule=`cat {$SERIAL_STARTER_RULE_FILE}`
+    sed -i '/^\s*{$SERIAL_STARTER_TEXT_MATCH}/i \$usb_rule\' $SERIAL_STARTER_RULES_FILE
+fi
 
 # Declare service in serial starter conf file
-SERIAL_STARTER_CONFIG='/etc/venus/serial-starter.conf'
-CONFIG='service relay       dbus-ne-shunt'
-if ! grep -q "^$CONFIG$" "$SERIAL_STARTER_CONFIG"; then
-  echo "$CONFIG" >> "$SERIAL_STARTER_CONFIG"
+SERIAL_STARTER_CONFIG_FILE='/etc/venus/serial-starter.conf'
+SERVICE_TEMPLATE_NAME="dbus-ne-shunt"
+
+if ! grep -q "^$CONFIG$" "$SERIAL_STARTER_CONFIG_FILE"; then
+  echo "service {$VE_SERVICE_NAME}       {$SERVICE_TEMPLATE_NAME}" >> $SERIAL_STARTER_CONFIG_FILE
 fi
-
-if [ $? != 0 ] ; then
-  echo "Usb serial device not found, exiting."
-  echo "Update '/etc/udev/rules.d/serial-starter.rules' manualy"
-  exit 1
-fi
-
-echo "Patching $serial_starter_rules_basepath.patch" 
-patch /etc/udev/rules.d/serial-starter.rules $serial_starter_rules_basepath.patch 
-
+ 
 echo "dbus-ne-shunt installed"
  
