@@ -75,14 +75,20 @@ def _detect_inserted_serial_usb_device():
         timeout_counter += 1
         if timeout_counter > 60: 
             _progress(f"Timeout, exiting...")
-            exit(1)
+            return False
 
-        updateMsg = (f"{standardmsg}\n" if dbus_message_path else "") + f"No new USB device detected, retrying{'.' * counter}  "
-        _progress(updateMsg, end='\r') #end just for terminal output
+        updateMsg = f"No new USB device detected, retrying{'.' * counter}  "
+        updateMsgDbus = f"{standardmsg}\n" +termMsg
+        
+        _progress(updateMsg, updateMsgDbus, end='\r') #end just for terminal output
  
-def _progress(msg, end='\n'):
+def _progress(msg, dbusMsg = None, end='\n'):
+ 
     if dbus_message_path:
-        os.popen(f"dbus -y {dbus_message_path} SetValue '{msg}'").read()
+        if dbusMsg is None:
+            dbusMsg = msg
+
+        os.popen(f"dbus -y {dbus_message_path} SetValue '{dbusMsg}'").read()
  
     print(msg, end=end)
 
