@@ -6,6 +6,7 @@ SERVICE_NAME="dbus-ne-shunt"
 DBUS_NE_SHUNT_INSTALL_PATH="/opt/victronenergy/${SERVICE_NAME}"
 SERIAL_STARTER_RULE_FILE="${DBUS_NE_SHUNT_INSTALL_PATH}/serial-starter.rule"
 DBUS_MESSAGE_PATH="com.victronenergy.packageManager /GuiEditStatus"
+#WSERIAL_STARTER_RULE_FILE="/opt/victronenergy/dbus-ne-shunt/serial-starter.rule"
 
 python $DBUS_NE_SHUNT_INSTALL_PATH/usb-serial-helper.py "${SERVICE_NAME}" "${SERIAL_STARTER_RULE_FILE}" "${DBUS_MESSAGE_PATH}"
 
@@ -14,9 +15,12 @@ SERIAL_STARTER_TEXT_MATCH="# The VE USB RS485"
 if [ -f $SERIAL_STARTER_RULE_FILE ]; then
     # read the rule added to serial-starter.rule by usb-serial-helper.py and
     # place it into the /etc/udev/rules.d/serial-starter.rules file
-    usb_rule= cat ${SERIAL_STARTER_RULE_FILE}
-    echo updating \'"${SERIAL_STARTER_RULES_FILE}"\' using \'"/^\\s*${SERIAL_STARTER_TEXT_MATCH}/i \\${usb_rule}\\"\' 
+    echo "getting rule" 
+    usb_rule=cat ${SERIAL_STARTER_RULE_FILE}
+    echo "updating \'"${SERIAL_STARTER_RULES_FILE}"\' using \'"/^\\s*${SERIAL_STARTER_TEXT_MATCH}/i \\${usb_rule}\\"\'"
     sed -i "/^\\s*${SERIAL_STARTER_TEXT_MATCH}/i \\${usb_rule}\\" $SERIAL_STARTER_RULES_FILE
+else
+    echo "waring rule file does not exist"
 fi
 
 # Declare service in serial starter conf file
