@@ -1,8 +1,10 @@
 #!/bin/sh
 
+
+SERVICE_NAME="dbus-ne-shunt"
+VE_SERVICE_NAME="neshunt"
 DBUS_NE_SHUNT_INSTALL_PATH="/opt/victronenergy/$SERVICE_NAME"
 
-VE_SERVICE_NAME="neshunt"
 SERIAL_STARTER_RULE_FILE="$DBUS_NE_SHUNT_INSTALL_PATH/serial-starter.rule"
 DBUS_MESSAGE_PATH="com.victronenergy.packageManager /GuiEditStatus"
 
@@ -19,8 +21,7 @@ fi
 
 # Declare service in serial starter conf file
 SERIAL_STARTER_CONFIG_FILE='/etc/venus/serial-starter.conf'
-SERVICE_TEMPLATE_NAME="dbus-ne-shunt"
-CONFIG="service {$VE_SERVICE_NAME}       {$SERVICE_TEMPLATE_NAME}"
+CONFIG="service {$VE_SERVICE_NAME}       {$SERVICE_NAME}"
 
 if ! grep -q "^$CONFIG$" "$SERIAL_STARTER_CONFIG_FILE"; then
   echo "${CONFIG}" >> $SERIAL_STARTER_CONFIG_FILE
