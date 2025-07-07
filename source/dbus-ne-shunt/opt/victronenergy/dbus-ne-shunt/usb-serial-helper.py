@@ -100,7 +100,7 @@ if __name__ == "__main__":
         exit(1)
 
     if _create_serial_starter_rule :
-        print("Serial starter rule successuly added to {serial_starter_rule_file}")
+        print("Serial starter rule successuly added to {$serial_starter_rule_file}")
         exit(0)
     else:
         print("Usb device not found. Please manualy update {serial_starter_rule_file}")

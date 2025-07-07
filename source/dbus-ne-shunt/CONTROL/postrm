@@ -1,26 +1,26 @@
 #!/bin/sh
 
 SERVICE_NAME="dbus-ne-shunt"
-DBUS_NE_SHUNT_INSTALL_PATH="/opt/victronenergy/$SERVICE_NAME"
-SERIAL_STARTER_RULE_FILE="$DBUS_NE_SHUNT_INSTALL_PATH/serial-starter.rule"
+DBUS_NE_SHUNT_INSTALL_PATH="/opt/victronenergy/${SERVICE_NAME}"
+SERIAL_STARTER_RULE_FILE="${DBUS_NE_SHUNT_INSTALL_PATH}/serial-starter.rule"
 
 if [ -f $SERIAL_STARTER_RULE_FILE ]; then
   # read the rule added to serial-starter.rule by usb-serial-helper.py in postinst
   # place it into the /etc/udev/rules.d/serial-starter.rules file
   echo "removing rule from serial-starter.rule" 
-  usb_rule=`cat {$SERIAL_STARTER_RULE_FILE}`
-  sed -e "s/{$usb_rule}}//g" -i.backup *
+  usb_rule="cat ${SERIAL_STARTER_RULE_FILE}"
+  sed -e "s/${usb_rule}//g" -i.backup *
   
 else
-  echo "warning file not found: {$SERIAL_STARTER_RULE_FILE}"
+  echo "warning file not found: ${SERIAL_STARTER_RULE_FILE}"
 fi
 
 # Remove service from serial starter conf file
 SERIAL_STARTER_CONFIG='/etc/venus/serial-starter.conf'
-CONFIG='service neshunt       dbus-ne-shunt'
-if grep -q "^$CONFIG$" "$SERIAL_STARTER_CONFIG"; then
-  sed -i "/^$CONFIG$/d" "$SERIAL_STARTER_CONFIG"
+CONFIG="service neshunt       ${SERVICE_NAME}"
+if grep -q "^${CONFIG}$" "${SERIAL_STARTER_CONFIG}"; then
+  sed -i "/^${CONFIG}$/d" "${SERIAL_STARTER_CONFIG}"
 fi
 
 # Remove configuration files
-rm -rf /etc/dbus-ne-shunt
+rm -rf /etc/${SERVICE_NAME}
