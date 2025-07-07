@@ -9,17 +9,18 @@ if [ -f $SERIAL_STARTER_RULE_FILE ]; then
   # place it into the /etc/udev/rules.d/serial-starter.rules file
   echo "removing rule from serial-starter.rule" 
   usb_rule="cat ${SERIAL_STARTER_RULE_FILE}"
-  sed -e "s/${usb_rule}//g" -i.backup *
+  sed -e "s/${usb_rule}/g" -i.backup *
   
 else
   echo "warning file not found: ${SERIAL_STARTER_RULE_FILE}"
 fi
 
 # Remove service from serial starter conf file
+echo "removing configfrom '/etc/venus/serial-starter.conf'"
 SERIAL_STARTER_CONFIG='/etc/venus/serial-starter.conf'
 CONFIG="service neshunt       ${SERVICE_NAME}"
 if grep -q "^${CONFIG}$" "${SERIAL_STARTER_CONFIG}"; then
-  sed -i "\/^${CONFIG}$\/d" "${SERIAL_STARTER_CONFIG}"
+  sed -i "/^${CONFIG}$/d" "${SERIAL_STARTER_CONFIG}"
 fi
 
 # Remove configuration files
