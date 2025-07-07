@@ -7,7 +7,7 @@ import os
 import time
 import sys
  
-serial_starter_ve_env_service_name = NONE
+serial_starter_ve_env_service_name = None
 serial_starter_rule_file = None
 dbus_message_path = None
 
