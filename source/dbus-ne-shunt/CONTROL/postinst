@@ -15,8 +15,8 @@ if [ -f $SERIAL_STARTER_RULE_FILE ]; then
     # read the rule added to serial-starter.rule by usb-serial-helper.py and
     # place it into the /etc/udev/rules.d/serial-starter.rules file
     usb_rule="cat ${SERIAL_STARTER_RULE_FILE}"
-    echo updating \'"${SERIAL_STARTER_RULES_FILE}"\' using \'"/^\\s*/${SERIAL_STARTER_TEXT_MATCH}/i \\${usb_rule}\\"\' 
-    sed -i "/^\\s*/${SERIAL_STARTER_TEXT_MATCH}/i \\${usb_rule}\\" $SERIAL_STARTER_RULES_FILE
+    echo updating \'"${SERIAL_STARTER_RULES_FILE}"\' using \'"/^\\s*${SERIAL_STARTER_TEXT_MATCH}/i \\${usb_rule}\\"\' 
+    sed -i "/^\\s*${SERIAL_STARTER_TEXT_MATCH}/i \\${usb_rule}\\" $SERIAL_STARTER_RULES_FILE
 fi
 
 # Declare service in serial starter conf file
