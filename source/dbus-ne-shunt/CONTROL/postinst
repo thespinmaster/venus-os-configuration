@@ -6,6 +6,8 @@ SERVICE_NAME="dbus-ne-shunt"
 DBUS_NE_SHUNT_INSTALL_PATH="/opt/victronenergy/${SERVICE_NAME}"
 SERIAL_STARTER_RULE_FILE="${DBUS_NE_SHUNT_INSTALL_PATH}/serial-starter.rule"
 DBUS_MESSAGE_PATH="com.victronenergy.packageManager /GuiEditStatus"
+DBUS_MESSAGE_PATH=""
+
 #WSERIAL_STARTER_RULE_FILE="/opt/victronenergy/dbus-ne-shunt/serial-starter.rule"
 
 python $DBUS_NE_SHUNT_INSTALL_PATH/usb-serial-helper.py "${SERVICE_NAME}" "${SERIAL_STARTER_RULE_FILE}" "${DBUS_MESSAGE_PATH}"
