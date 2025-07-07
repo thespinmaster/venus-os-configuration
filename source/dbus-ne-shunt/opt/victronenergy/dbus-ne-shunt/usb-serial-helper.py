@@ -78,11 +78,10 @@ def _detect_inserted_serial_usb_device():
             return False
 
         updateMsg = f"No new USB device detected, retrying{'.' * counter}  "
-        updateMsgDbus = f"{standardmsg}\n" +termMsg
-        
+ 
         _progress(updateMsg, updateMsgDbus, end='\r') #end just for terminal output
  
-def _progress(msg, dbusMsg = None, end='\n'):
+def _progress(msg, dbusMsg = f"{standardmsg}\n{updateMsg}", end='\n'):
  
     if dbus_message_path:
         if dbusMsg is None:
