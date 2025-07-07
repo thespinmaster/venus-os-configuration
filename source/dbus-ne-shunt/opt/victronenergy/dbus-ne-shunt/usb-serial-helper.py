@@ -2,28 +2,28 @@
 
 # helper class for detecting an added usb serial device
 # called durin installation from the ipk installer (CONTROL/postinst)
-#
+
 import os
 import time
 import sys
  
-serial_starter_ve_env_service_name = None
-serial_starter_rule_file = None
-dbus_message_path = None
+_serialStarterVeEnvServiceName = None
+_serialStarterRuleFile = None
+_dbusMessagePath = None
 
 SERIAL_STARTER_RULE_PLACEHOLDER = "# ---neshunt action placeholder---"
 
-def _create_serial_starter_rule():
+def _createSerialStarterRule():
  
-    new_device = _detect_inserted_serial_usb_device()
-    if (new_device is None):
+    newDevice = _detectInsertedSerialUsbDevice()
+    if (newDevice is None):
         _progress("No new USB device found.")
         return False
  
-    _progress(f"Found new USB device: {new_device}")
+    _progress(f"Found new USB device: {newDevice}")
     
     # Extract the bus and device number from the line
-    parts = new_device.split()
+    parts = newDevice.split()
     bus = parts[1]
     device = parts[3][:-1]  # Remove the trailing ':'
 
@@ -37,57 +37,57 @@ def _create_serial_starter_rule():
         _progress("No serial ID found for the device.")
         return False
 
-    usb_rule = f"# {os.path.basename(os.path.dirname(__file__))}\n"
-    usb_rule += f'ACTION=="add", ENV{{ID_BUS}}=="usb", ENV{{ID_VENDOR_ID}}=="{vendorId}", ENV{{ID_MODEL_ID}}=="{productId}", ENV{{ID_SERIAL_SHORT}}=="{serialId}", ENV{{VE_SERVICE}}="{serial_starter_ve_env_service_name}"'
+    usbRule = f"# {os.path.basename(os.path.dirname(__file__))}\n"
+    usbRule += f'ACTION=="add", ENV{{ID_BUS}}=="usb", ENV{{ID_VENDOR_ID}}=="{vendorId}", ENV{{ID_MODEL_ID}}=="{productId}", ENV{{ID_SERIAL_SHORT}}=="{serialId}", ENV{{VE_SERVICE}}="{_serialStarterVeEnvServiceName}"'
  
     # save the rule to a file. which is used to add and uninstall the value
-    with open(serial_starter_rule_file, 'w') as file:
-        file.write(usb_rule)
+    with open(_serialStarterRuleFile, 'w') as file:
+        file.write(usbRule)
  
     return True
 
-def _detect_inserted_serial_usb_device():
+def _detectInsertedSerialUsbDevice():
 
-    before_usb_devices = os.popen("lsusb").read().strip().splitlines() 
+    beforeUsbDevices = os.popen("lsusb").read().strip().splitlines() 
     counter = 0
-    timeout_counter = 0
+    timeoutCounter = 0
 
-    standardmsg = "Please connect the serial device (or remove and reconnect it) to the USB port."
-    _progress(standardmsg)
+    progressHeaderMsg = "Please connect the serial device (or remove and reconnect it) to the USB port."
+    _progress(progressHeaderMsg)
     _progress("Waiting for USB device to be connected...")
  
     while True:
         # Wait for the device to be connected 
         time.sleep(1)
-        after_usb_devices = os.popen("lsusb").read().strip().splitlines() 
+        afterUsbDevices = os.popen("lsusb").read().strip().splitlines() 
  
-        if len(after_usb_devices) == (len(before_usb_devices) + 1):
-            for line in after_usb_devices:
-                if line not in before_usb_devices:
+        if len(afterUsbDevices) == (len(beforeUsbDevices) + 1):
+            for line in afterUsbDevices:
+                if line not in beforeUsbDevices:
                     return line
             break
         else:
-            before_usb_devices = after_usb_devices
+            beforeUsbDevices = afterUsbDevices
 
         counter += 1
         if counter > 3: counter = 1
 
-        timeout_counter += 1
-        if timeout_counter > 60: 
+        timeoutCounter += 1
+        if timeoutCounter > 60: 
             _progress(f"Timeout, exiting...")
             return False
 
         updateMsg = f"No new USB device detected, retrying{'.' * counter}  "
  
-        _progress(updateMsg, updateMsgDbus, end='\r') #end just for terminal output
+        _progress(updateMsg, f"{progressHeaderMsg}\n{updateMsg}", end='\r') #end just for terminal output
  
-def _progress(msg, dbusMsg = f"{standardmsg}\n{updateMsg}", end='\n'):
+def _progress(msg, dbusMsg = None, end='\n'):
  
-    if dbus_message_path:
+    if _dbusMessagePath:
         if dbusMsg is None:
             dbusMsg = msg
 
-        os.popen(f"dbus -y {dbus_message_path} SetValue '{dbusMsg}'").read()
+        os.popen(f"dbus -y {_dbusMessagePath} SetValue '{dbusMsg}'").read()
  
     print(msg, end=end)
 
@@ -96,17 +96,17 @@ if __name__ == "__main__":
         print(sys.argv)
  
         # note arg 0 is the name of this script filename
-        serial_starter_ve_env_service_name = sys.argv[1]
-        serial_starter_rule_file = sys.argv[2]
-        dbus_message_path = sys.argv[3]
+        _serialStarterVeEnvServiceName = sys.argv[1]
+        _serialStarterRuleFile = sys.argv[2]
+        _dbusMessagePath = sys.argv[3]
     else:
         print(sys.argv)
         print("Error invalid arguments passed. Requires:\narg 1 (string): The ve service environment name.\narg 2 (string): The path to store the rule text added to the serial-starter.rules file. Used to remove the value when uninstalling\narg 3 (string) The dbus path to optionaly send messages to. Can be an empty string if not using dbus")
         exit(1)
 
-    if _create_serial_starter_rule() :
-        print(f"Serial starter rule successuly added to {serial_starter_rule_file}")
+    if _createSerialStarterRule() :
+        print(f"Serial starter rule successuly added to {_serialStarterRuleFile}")
         exit(0)
     else:
-        print(f"Usb device not found. Please manualy update {serial_starter_rule_file}")
+        print(f"Usb device not found. Please manualy update {_serialStarterRuleFile}")
         exit(1)
