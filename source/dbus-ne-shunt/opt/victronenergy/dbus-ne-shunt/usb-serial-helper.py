@@ -77,7 +77,7 @@ def _detect_inserted_serial_usb_device():
             _progress(f"Timeout, exiting...")
             exit(1)
 
-        updateMsg = (f"{standardmsg}\n" if runFromPm else "") + f"No new USB device detected, retrying{'.' * counter}  "
+        updateMsg = (f"{standardmsg}\n" if dbus_message_path else "") + f"No new USB device detected, retrying{'.' * counter}  "
         _progress(updateMsg, end='\r') #end just for terminal output
  
 def _progress(msg, end='\n'):
