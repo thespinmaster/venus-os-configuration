@@ -99,9 +99,9 @@ if __name__ == "__main__":
         print("Error invalid arguments passed. Requires:\narg 1 (string): The ve service environment name.\narg 2 (string): The path to store the rule text added to the serial-starter.rules file. Used to remove the value when uninstalling\narg 3 (string) The dbus path to optionaly send messages to. Can be an empty string if not using dbus")
         exit(1)
 
-    if _create_serial_starter_rule :
-        print("Serial starter rule successuly added to {$serial_starter_rule_file}")
+    if _create_serial_starter_rule() :
+        print(f"Serial starter rule successuly added to {serial_starter_rule_file}")
         exit(0)
     else:
-        print("Usb device not found. Please manualy update {serial_starter_rule_file}")
+        print(f"Usb device not found. Please manualy update {serial_starter_rule_file}")
         exit(1)
