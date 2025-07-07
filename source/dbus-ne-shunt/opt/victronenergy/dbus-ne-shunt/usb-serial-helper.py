@@ -37,7 +37,7 @@ def _create_serial_starter_rule():
         _progress("No serial ID found for the device.")
         return False
 
-    usb_rule = "# {os.path.basename(os.path.dirname(__file__))}\n"
+    usb_rule = f"# {os.path.basename(os.path.dirname(__file__))}\n"
     usb_rule += f'ACTION=="add", ENV{{ID_BUS}}=="usb", ENV{{ID_VENDOR_ID}}=="{vendorId}", ENV{{ID_MODEL_ID}}=="{productId}", ENV{{ID_SERIAL_SHORT}}=="{serialId}", ENV{{VE_SERVICE}}="{serial_starter_ve_env_service_name}"'
  
     # save the rule to a file. which is used to add and uninstall the value
