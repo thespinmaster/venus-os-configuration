@@ -21,7 +21,7 @@ if [ -f $SERIAL_STARTER_RULE_FILE ]; then
     usb_rule=$(cat ${SERIAL_STARTER_RULE_FILE})
     echo "updating \'"${SERIAL_STARTER_RULES_FILE}"\' using \'"'/^\\s*'${SERIAL_STARTER_TEXT_MATCH}'/i \\'${usb_rule}"\'"
  
-    sed -i '/^\s*'${SERIAL_STARTER_TEXT_MATCH}'/i \'${usb_rule}'\' $SERIAL_STARTER_RULES_FILE
+    sed -i '^\s*'${SERIAL_STARTER_TEXT_MATCH}'/i \'${usb_rule}'\' $SERIAL_STARTER_RULES_FILE
 else
     echo "waring rule file does not exist"
 fi
