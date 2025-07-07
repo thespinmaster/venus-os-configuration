@@ -3,14 +3,14 @@
 VE_SERVICE_NAME="neshunt"
 
 SERVICE_NAME="dbus-ne-shunt"
-DBUS_NE_SHUNT_INSTALL_PATH="/opt/victronenergy/$SERVICE_NAME"
-SERIAL_STARTER_RULE_FILE="$DBUS_NE_SHUNT_INSTALL_PATH/serial-starter.rule"
+DBUS_NE_SHUNT_INSTALL_PATH="/opt/victronenergy/${SERVICE_NAME}"
+SERIAL_STARTER_RULE_FILE="${DBUS_NE_SHUNT_INSTALL_PATH}/serial-starter.rule"
 DBUS_MESSAGE_PATH="com.victronenergy.packageManager /GuiEditStatus"
 
-python $DBUS_NE_SHUNT_INSTALL_PATH/usb-serial-helper.py $SERVICE_NAME $SERIAL_STARTER_RULE_FILE $DBUS_MESSAGE_PATH
+python $DBUS_NE_SHUNT_INSTALL_PATH/usb-serial-helper.py '${SERVICE_NAME}' '${SERIAL_STARTER_RULE_FILE}' '${DBUS_MESSAGE_PATH}'
 
-SERIAL_STARTER_RULES_FILE="/etc/udev/rules.d/serial-starter.rules"
-SERIAL_STARTER_TEXT_MATCH="# The VE USB RS485"
+SERIAL_STARTER_RULES_FILE='/etc/udev/rules.d/serial-starter.rules'
+SERIAL_STARTER_TEXT_MATCH='# The VE USB RS485'
 if [ -f $SERIAL_STARTER_RULE_FILE ]; then
     # read the rule added to serial-starter.rule by usb-serial-helper.py and
     # place it into the /etc/udev/rules.d/serial-starter.rules file
@@ -20,7 +20,7 @@ fi
 
 # Declare service in serial starter conf file
 SERIAL_STARTER_CONFIG_FILE='/etc/venus/serial-starter.conf'
-CONFIG="service {$VE_SERVICE_NAME}       {$SERVICE_NAME}"
+CONFIG='service {$VE_SERVICE_NAME}       {$SERVICE_NAME}'
 
 if ! grep -q "^$CONFIG$" "$SERIAL_STARTER_CONFIG_FILE"; then
   echo "${CONFIG}" >> $SERIAL_STARTER_CONFIG_FILE

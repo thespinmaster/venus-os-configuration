@@ -96,7 +96,7 @@ if __name__ == "__main__":
         dbus_message_path = sys.arhs[3]
     else:
         print(sys.argv)
-        print("Error invalid arguments passed. Requires:\nargs1 (string): The ve service environment name.\narg2 (string): The path to store the rule text added to the serial-starter.rules file. Used to remove the value when uninstalling\narg3 (string) The dbus path to optionaly send messages to. Can be an empty string if not using dbus")
+        print("Error invalid arguments passed. Requires:\narg 1 (string): The ve service environment name.\narg 2 (string): The path to store the rule text added to the serial-starter.rules file. Used to remove the value when uninstalling\narg 3 (string) The dbus path to optionaly send messages to. Can be an empty string if not using dbus")
         exit(1)
 
     if _create_serial_starter_rule :
