@@ -1,9 +1,13 @@
 #!/bin/sh
 
+SERVICE_NAME="dbus-ne-shunt"
+DBUS_NE_SHUNT_INSTALL_PATH="/opt/victronenergy/$SERVICE_NAME"
+SERIAL_STARTER_RULE_FILE="$DBUS_NE_SHUNT_INSTALL_PATH/serial-starter.rule"
+
 if [ -f $SERIAL_STARTER_RULE_FILE ]; then
   # read the rule added to serial-starter.rule by usb-serial-helper.py in postinst
   # place it into the /etc/udev/rules.d/serial-starter.rules file
-
+  echo "removing rule from serial-starter.rule" 
   usb_rule=`cat {$SERIAL_STARTER_RULE_FILE}`
   sed -e "s/{$usb_rule}}//g" -i.backup *
   

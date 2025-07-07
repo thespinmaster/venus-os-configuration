@@ -1,10 +1,9 @@
 #!/bin/sh
 
+VE_SERVICE_NAME="neshunt"
 
 SERVICE_NAME="dbus-ne-shunt"
-VE_SERVICE_NAME="neshunt"
 DBUS_NE_SHUNT_INSTALL_PATH="/opt/victronenergy/$SERVICE_NAME"
-
 SERIAL_STARTER_RULE_FILE="$DBUS_NE_SHUNT_INSTALL_PATH/serial-starter.rule"
 DBUS_MESSAGE_PATH="com.victronenergy.packageManager /GuiEditStatus"
 
