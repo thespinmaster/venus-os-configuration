@@ -7,7 +7,7 @@ DBUS_NE_SHUNT_INSTALL_PATH="/opt/victronenergy/${SERVICE_NAME}"
 SERIAL_STARTER_RULE_FILE="${DBUS_NE_SHUNT_INSTALL_PATH}/serial-starter.rule"
 DBUS_MESSAGE_PATH="com.victronenergy.packageManager /GuiEditStatus"
 
-python $DBUS_NE_SHUNT_INSTALL_PATH/usb-serial-helper.py '${SERVICE_NAME}' '${SERIAL_STARTER_RULE_FILE}' '${DBUS_MESSAGE_PATH}'
+python $DBUS_NE_SHUNT_INSTALL_PATH/usb-serial-helper.py "${SERVICE_NAME}" "${SERIAL_STARTER_RULE_FILE}" "${DBUS_MESSAGE_PATH}"
 
 SERIAL_STARTER_RULES_FILE='/etc/udev/rules.d/serial-starter.rules'
 SERIAL_STARTER_TEXT_MATCH='# The VE USB RS485'
