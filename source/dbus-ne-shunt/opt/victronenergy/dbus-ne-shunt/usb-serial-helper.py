@@ -91,9 +91,9 @@ if __name__ == "__main__":
         print(sys.argv)
  
         # note arg 0 is the name of this script filename
-        serial_starter_ve_env_service_name= sys.args[1]
+        serial_starter_ve_env_service_name = sys.argv[1]
         serial_starter_rule_file = sys.argv[2]
-        dbus_message_path = sys.arhs[3]
+        dbus_message_path = sys.argv[3]
     else:
         print(sys.argv)
         print("Error invalid arguments passed. Requires:\narg 1 (string): The ve service environment name.\narg 2 (string): The path to store the rule text added to the serial-starter.rules file. Used to remove the value when uninstalling\narg 3 (string) The dbus path to optionaly send messages to. Can be an empty string if not using dbus")
