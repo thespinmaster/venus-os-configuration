@@ -1,0 +1,11 @@
+Package: test-service
+Version: 1.0.0
+Description: A simple service for testing
+Section: utilities
+Priority: optional
+Maintainer: thespinmaster@github.com
+License: MIT
+Architecture: all
+OE: einstine
+Source: https://github.com/thespinmaster/venus-os-configuration/tree/main/feed/test-service
+Depends: python3

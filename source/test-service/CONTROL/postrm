@@ -1,24 +1,25 @@
 #!/bin/bash
 
-#echo "thisfile:${0}"
+echo "postrm location:${0}"
 
-SERVICE_NAME=$(basename ${0%.*}) #get file name without path
+BASE_INSTALL_FILE_PATH=${0%.*} # strip file extension (.postinst)
+SERVICE_NAME=$(cat "${BASE_INSTALL_FILE_PATH}".control | grep Package | cut -d" " -f2)
+# alt SERVICE_NAME=$(basename ${0%.*}) #get file name without path
 echo "SERVICE_NAME:${SERVICE_NAME}" #remove the extension from the filename
 
-USB_SERIAL_HELPER_SCRIPT_FILE="${SERVICE_NAME}.usb-serial-helper" 
-echo "USB_SERIAL_HELPER_SCRIPT_FILE:${USB_SERIAL_HELPER_SCRIPT_FILE}"
+INSTALL_HELPER_SCRIPT_FILE="${BASE_INSTALL_FILE_PATH}.install-helper" 
+echo "INSTALL_HELPER_SCRIPT_FILE:${INSTALL_HELPER_SCRIPT_FILE}"
 
 SERIAL_STARTER_RULES_FILE="/etc/udev/rules.d/serial-starter.rules"
 DBUS_MESSAGE_PATH="com.victronenergy.packageManager /GuiEditStatus"
 DBUS_MESSAGE_PATH=""
-VE_SERVICE_MAPPING_NAME="neshunt"
+VE_SERVICE_MAPPING_NAME="teststarter"
 
 #if false; then
-USB_SERIAL_HELPER_ACTION="remove" #"detect_add" "add" "remove" 
-echo "./${USB_SERIAL_HELPER_SCRIPT_FILE}"
-
-python "${USB_SERIAL_HELPER_SCRIPT_FILE}"\
-    "${USB_SERIAL_HELPER_ACTION}"\
+INSTALL_HELPER_ACTION="usb-serial-helper.remove" #"detect_add" "add" "remove"
+ 
+python "${INSTALL_HELPER_SCRIPT_FILE}"\
+    "${INSTALL_HELPER_ACTION}"\
     "${SERIAL_STARTER_RULES_FILE}"\
     "${SERVICE_NAME}"\
     "${VE_SERVICE_MAPPING_NAME}"\
@@ -34,3 +35,5 @@ if grep -q "^${CONFIG}$" "${SERIAL_STARTER_CONFIG_FILE}"; then
  echo "removing service mapping config from ${SERIAL_STARTER_CONFIG_FILE}"
  sed -i '/^'"${CONFIG}"'/d' $SERIAL_STARTER_CONFIG_FILE
 fi
+
+echo "${SERVICE_NAME}" removed

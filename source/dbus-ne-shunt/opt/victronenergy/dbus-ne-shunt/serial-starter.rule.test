@@ -1,0 +1,2 @@
+# dbus-ne-shunt
+ACTION=="add", ENV{ID_BUS}=="usb", ENV{ID_VENDOR_ID}=="0x1a86", ENV{ID_MODEL_ID}=="0x55d3", ENV{ID_SERIAL_SHORT}=="5957005900", ENV{VE_SERVICE}="neshunt"

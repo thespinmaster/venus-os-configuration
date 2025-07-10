@@ -1,5 +1,8 @@
 1751822411 dbus-ne-shunt_1.0.0_all.ipk
-1751987873 dbus-relay-board_1.0.0_all.ipk
-1751987873 virtual-gps_1.0.0_all.ipk
+1752095928 dbus-relay-board_1.0.0_all.ipk
+1752095928 virtual-gps_1.0.0_all.ipk
 1751894246 dbus-ne-shunt_1.0.1_all.ipk
-1751987873 dbus-ne-shunt_1.0.2_all.ipk
+1752095928 dbus-ne-shunt_1.0.2_all.ipk
+1752067038 dbus-ne-shunt_1.0.2_cortexa7hf-neon-vfpv4.ipk
+1752067039 test-service_1.0.0_cortexa7hf-neon-vfpv4.ipk
+1752095928 test-service_1.0.0_all.ipk

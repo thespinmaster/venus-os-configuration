@@ -1,0 +1,5 @@
+#!/bin/sh
+echo "*** starting test-service ***"
+exec 2>&1
+. /etc/profile.d/profile.sh
+exec /opt/victronenergy/test-service/start-test-service.sh TTY

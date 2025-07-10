@@ -93,19 +93,23 @@ def _progress(msg, dbusMsg = None, end='\n'):
     print(msg, end=end)
 
 def _remove_string_with_newline_variants(source, string_to_remove):
+
     source_len = len(source)
-    source = source.replace("\n" + string_to_remove + "\n")
+    source = source.replace("\n" + string_to_remove + "\n", "")
+
     if (len(source) < source_len):
         return source
-    source = source.replace("\n" + string_to_remove)
+    source = source.replace("\n" + string_to_remove, "")
     if (len(source) < source_len):
         return source
-    source = source.replace(string_to_remove + "\n")
+    source = source.replace(string_to_remove + "\n", "")
     if (len(source) < source_len):
         return source
-    source = source.replace(string_to_remove)
+    source = source.replace(string_to_remove, "")
     if (len(source) < source_len):
         return source
+    
+    return source
 
 def _do_serial_starter_rule_files_exist(serial_starter_rules_file, serial_starter_rule_file):
     
@@ -121,22 +125,18 @@ def _do_serial_starter_rule_files_exist(serial_starter_rules_file, serial_starte
 
 def _add_rule_to_serial_starter_rules_file(serial_starter_rules_file, serial_starter_rule_file):
  
-    if (not _do_serial_starter_rule_files_exist()):
-        return
+    if (not _do_serial_starter_rule_files_exist(serial_starter_rules_file, serial_starter_rule_file)):
+        return False
         
     with open(serial_starter_rules_file, 'r') as file:
         rules = file.readlines()
 
     with open(serial_starter_rule_file, 'r') as file:
-        rule = file.readlines()
+        rule = file.read()
 
     # Check if the rule already exists (for multi-line, check if all lines are present in order)
     rule_lines = [line.rstrip('\n') for line in rule.splitlines() if line.strip()]
     rules_str = ''.join([line.rstrip('\n') for line in rules])
- 
-    if ''.join(rule_lines) in rules_str:
-        print("Rule already exists in the file.")
-        return True
  
     # Check if the rule already exists
     for line in rules:
@@ -158,7 +158,7 @@ def _add_rule_to_serial_starter_rules_file(serial_starter_rules_file, serial_sta
     if not found:
         return False
     
-    with open(serial_starter_rule_file, 'w') as file:
+    with open(serial_starter_rules_file, 'w') as file:
         file.writelines(rules)
 
     print("Rule added successfully.")
@@ -166,60 +166,75 @@ def _add_rule_to_serial_starter_rules_file(serial_starter_rules_file, serial_sta
  
 def _remove_rule_from_serial_starter_rules_file(serial_starter_rules_file, serial_starter_rule_file):
 
-    if (not _do_serial_starter_rule_files_exist()):
-        return
+    if (not _do_serial_starter_rule_files_exist(serial_starter_rules_file, serial_starter_rule_file)):
+        return False
         
     with open(serial_starter_rules_file, 'r') as file:
-        rules = file.readlines()
+        rules = file.read()
 
     with open(serial_starter_rule_file, 'r') as file:
-        rule = file.readlines()
+        rule = file.read()
 
     rules_len = len(rules)  
     rules = _remove_string_with_newline_variants(rules, rule)
-    if (len(rules) < rules_len)
+    if (len(rules) < rules_len):
+        with open(serial_starter_rules_file, 'w') as file:
+            file.write(rules)
+            print(f"successfully removed rule from {serial_starter_rules_file}")
+    else:
+        print(f"warning rule not removed rule from {serial_starter_rules_file}")
 
-    with open(serial_starter_rules_file, 'w') as file:
-        file.write(rules)
-
+    return True
 
 if __name__ == "__main__":
 
     print(sys.argv)
-    if len(sys.argv) >= 4:
+    if len(sys.argv) >= 5:
+
         action = sys.argv[1]
         serial_starter_rules_file = sys.argv[2]
-        #_serialStarterRuleFile = sys.argv[2]
-        serial_tarter_config_mapping_name = sys.argv[3]
-        if len(sys.argv) >= 4:
-            _dbusMessagePath = sys.argv[4]
+        service_name = sys.argv[3]
+        serial_starter_config_mapping_name = sys.argv[4]
+        if len(sys.argv) >= 5:
+            _dbusMessagePath = sys.argv[5]
+
     else:
         print("Error invalid arguments passed. Requires:\narg 1 (string): The path to the serial-starter.rules file\narg 2 (string): The path to store the rule to be added to or removed from the serial-starter.rules file.\narg 3 (string): The ve service environment name.\narg 4 (string) The dbus path to optionaly send messages to. Can be an empty string if not using dbus")
         exit(1)
-        return
-    #
-    
+  
     service_path = os.path.dirname(__file__)
-    service_name = os.path.basename(service_path)
+    #service_name = os.path.basename(service_path)
     serial_starter_rule_file = os.path.join(service_path, "serial-starter.rule")
- 
-    if (action == "detect" | action == "detect+add"): 
-        if (not _create_serial_starter_rule(serial_starter_rule_file, service_name, serial_tarter_config_mapping_name)):
-            print(f"Usb device not found. Please manualy update {serial_starter_rule_file}")
-            exit(1) 
-            return
+    test_rule_file = os.path.join(service_path, "serial-starter.rule.test")
 
-    if (action == "add" | action == "detect+add" ):
+    if (action == "detect" or action == "detect_add"): 
+
+        if os.path.exists(test_rule_file):
+
+            print("detecting usb using test file...")
+            print(f'cp {test_rule_file} {serial_starter_rule_file}')
+            os.popen(f'cp {test_rule_file} {serial_starter_rule_file}').read()
+            print("Usb device found")
+
+        elif (not _create_serial_starter_rule(
+                    serial_starter_rule_file, 
+                    service_name, 
+                    serial_starter_config_mapping_name)):
+
+                print(f"Usb device not found. Please manualy update {serial_starter_rule_file}")
+                exit(1) 
+ 
+    if (action == "add" or action == "detect_add" ):
+
         if _add_rule_to_serial_starter_rules_file(serial_starter_rules_file, serial_starter_rule_file):
             exit(0)
-            return
         else:
             print(f"Cound not update {serial_starter_rules_file}. Please manualy update")
             
-    elif (action == "remove" | action == "detect+add" ):
-        if _remove_rule_from_serial_tarter_rules_file(serial_starter_rules_file, serial_starter_rule_file):
+    elif (action == "remove" ):
+
+        if _remove_rule_from_serial_starter_rules_file(serial_starter_rules_file, serial_starter_rule_file):
             exit(0)
-            return
         else:
             print(f"Warning: Could not remove rule from {serial_starter_rules_file}. Please manualy update")
  

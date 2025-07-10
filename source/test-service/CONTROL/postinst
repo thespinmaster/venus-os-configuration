@@ -1,24 +1,27 @@
 #!/bin/bash
 
-#echo "thisfile:${0}"
+echo "postinst location:${0}" #//usr/lib/opkg/info/test-service.postinst
+SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+echo "SCRIPT_DIR:${SCRIPT_DIR}"
 
-SERVICE_NAME=$(basename ${0%.*}) #get file name without path
+BASE_INSTALL_FILE_PATH=${0%.*} # strip file extension (.postinst)
+
+SERVICE_NAME=$(basename "${0%.*}") #get file name without path
 echo "SERVICE_NAME:${SERVICE_NAME}" #remove the extension from the filename
 
-USB_SERIAL_HELPER_SCRIPT_FILE="${SERVICE_NAME}.usb-serial-helper" 
-echo "USB_SERIAL_HELPER_SCRIPT_FILE:${USB_SERIAL_HELPER_SCRIPT_FILE}"
+INSTALL_HELPER_SCRIPT_FILE="${BASE_INSTALL_FILE_PATH}.install-helper" 
+echo "INSTALL_HELPER_SCRIPT_FILE:${INSTALL_HELPER_SCRIPT_FILE}"
 
 SERIAL_STARTER_RULES_FILE="/etc/udev/rules.d/serial-starter.rules"
 DBUS_MESSAGE_PATH="com.victronenergy.packageManager /GuiEditStatus"
 DBUS_MESSAGE_PATH=""
-VE_SERVICE_MAPPING_NAME="neshunt"
+VE_SERVICE_MAPPING_NAME="teststarter"
 
-USB_SERIAL_HELPER_ACTION="detect_add" #"detect_add" "add" "remove" 
-echo "./${USB_SERIAL_HELPER_SCRIPT_FILE}"
-
+INSTALL_HELPER_ACTION="usb-serial-helper.detect_add" #"detect_add" "add" "remove" 
+ 
 #if false; then
-python "${USB_SERIAL_HELPER_SCRIPT_FILE}"\
-    "${USB_SERIAL_HELPER_ACTION}"\
+python "${INSTALL_HELPER_SCRIPT_FILE}"\
+    "${INSTALL_HELPER_ACTION}"\
     "${SERIAL_STARTER_RULES_FILE}"\
     "${SERVICE_NAME}"\
     "${VE_SERVICE_MAPPING_NAME}"\
@@ -35,4 +38,4 @@ if ! grep -q "^${CONFIG}$" "${SERIAL_STARTER_CONFIG_FILE}"; then
  sed -i '1s/^/'"${CONFIG}"'\n/' $SERIAL_STARTER_CONFIG_FILE
 fi
  
-echo "${dbus-ne-shunt} installed"
+echo "${SERVICE_NAME} installed"
