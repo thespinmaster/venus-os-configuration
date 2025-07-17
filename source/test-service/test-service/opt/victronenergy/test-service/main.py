@@ -21,7 +21,7 @@ class test_service:
         pass
 
     def mainloop():
-        from datetime import datetime, timezone
+        import datetime, timezone
         utc_time = datetime.now(timezone.utc)
         print(utc_time.now(timezone.utc) +  ":hello from test-service")
 

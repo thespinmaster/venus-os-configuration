@@ -2,7 +2,7 @@
 
 #echo "thisfile:${0}"
 
-SERVICE_NAME=$(basename ${0%.*}) #get file name without path
+SERVICE_NAME=$(basename "${0%.*}") #get file name without path
 echo "SERVICE_NAME:${SERVICE_NAME}" #remove the extension from the filename
 
 USB_SERIAL_HELPER_SCRIPT_FILE="${SERVICE_NAME}.usb-serial-helper" 

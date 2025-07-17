@@ -7,21 +7,8 @@ import os
 import time
 import sys
  
-
 _dbus_message_path = None
-
-def log(msg, dbusMsg = None, end='\n'):
-
-    if _dbus_message_path:
-        if dbusMsg is None:
-            dbusMsg = msg
-
-        command = f"dbus-send --system --print-reply --dest={_dbus_message_path} com.victronenergy.BusItem.SetValue variant:string:{dbusMsg}"
-
-        os.popen(command).read()
-
-    print(msg, end=end)
-    
+   
 class _usb_serial_helper:
 
     SERIAL_STARTER_RULES_TEXT_MATCH='RUN+="/opt/victronenergy/serial-starter/cleanup.sh %k"'
@@ -30,54 +17,54 @@ class _usb_serial_helper:
     _serial_starter_rule_file=None
     _service_name=None
     _serial_starter_config_mapping_name=None
+    _test_usb_id=None
 
     def parseArgs(self):
         
+        print("parse ARGS:" + str(len(sys.argv)))
+
         if len(sys.argv) >= 5:
- 
+
             self._serial_starter_rules_file = sys.argv[2]
             self._service_name = sys.argv[3]
             self._serial_starter_config_mapping_name = sys.argv[4]
-            if len(sys.argv) >= 5:
+            if len(sys.argv) >= 6:
                 global _dbusMessagePath 
                 _dbusMessagePath = sys.argv[5]
 
+            if len(sys.argv) >= 7: 
+                self._test_usb_id = sys.argv[6]
+                print("_test_usb_id=" + self._test_usb_id)
+            
         else:
             log("Error invalid arguments passed. Requires:\narg 1 (string): The path to the serial-starter.rules file\narg 2 (string): The path to store the rule to be added to or removed from the serial-starter.rules file.\narg 3 (string): The ve service environment name.\narg 4 (string) The dbus path to optionaly send messages to. Can be an empty string if not using dbus")
             exit(1)
 
-        from pathlib import Path
+        
         #change path from //usr/lib/opkg/info/test-service.install-helper
         #to               //usr/lib/opkg/info/test-service.serial-starter.rule
-        log("__file__:" + __file__)
-        log("dirname:" + os.path.dirname(__file__))
+ 
+        name, extension = os.path.splitext(__file__)
+        #d1=os.path.dirname(__file__)
+        #d2=os.path.dirname(d1)
+        #d3=os.path.dirname(d2)
+        #d4 =os.path.basename(name)
 
-        p = Path(__file__)
-        #filename.with_suffix('')
-        #ilename.with_suffix('.serial-starter')
-        #filename.with_suffix('.rule')
+        if extension == '' and __debug__:
+            # we're degugging in the ide
+            self._serial_starter_rule_file = f"../../serial-starter.debugger.rule"
+        else:
+            self._serial_starter_rule_file = f"/data/{self._service_name}/serial-starter.rule"
  
-        self._serial_starter_rule_file= str(p.rename(p.with_suffix('.serial-starter'))) + ".rule"
- 
-        log("_serial_starter_rule_file:" + self._serial_starter_rule_file)
+        log("_serial_starter_rule_file:" + self._serial_starter_rules_file)
 
     def executeAction(self, action):
-
-        test_rule_file = self._serial_starter_rule_file + ".test"
-        log(f"test_rule_rule: {test_rule_file}")
+ 
         if (action == "detect" or action == "detect_add"): 
 
-            if os.path.exists(test_rule_file):
-
-                log("detecting usb using test file...")
-                log(f'cp {test_rule_file} {self._serial_starter_rule_file}')
-                os.popen(f'cp {test_rule_file} {self._serial_starter_rule_file}').read()
-                log("Usb device found")
-
-            elif (not self._create_serial_starter_rule()):
-
-                    log(f"Usb device not found. Please manualy update {self._serial_starter_rule_file}")
-                    exit(1) 
+            if (not self._create_serial_starter_rule()):
+                log(f"Usb device not found. Please manualy update {self._serial_starter_rule_file}")
+                exit(1) 
 
         if (action == "add" or action == "detect_add" ):
 
@@ -96,12 +83,22 @@ class _usb_serial_helper:
         exit(1)
     
     def _create_serial_starter_rule(self):
-    
+        
+        print("sleeping...")
+        time.sleep(120)
+        # Check if rule file already exists
+        # the file /data/<service-name>/serial-starter.rule will already
+        # exist if installed
+        # so when we need to do a re-install (after a firmware upgrade) we
+        # can install silently.
+        if (os.path.exists(self._serial_starter_rule_file)):
+            return True
+
         new_device = self._detect_inserted_serial_usb_device()
         if (new_device is None):
             log("No new USB device found.")
             return False
-    
+
         log(f"Found new USB device: {new_device}")
         
         # Extract the bus and device number from the line
@@ -109,31 +106,33 @@ class _usb_serial_helper:
         bus = parts[1]
         device = parts[3][:-1]  # Remove the trailing ':'
 
-        command = f"lsusb -v -s {bus}:{device} | grep -e 'idVendor' -e 'idProduct' -e 'iSerial'"
+        command = f"udevadm info --name=/dev/bus/usb/003/003 --query=property | grep \"ID_VENDOR=\\|ID_MODEL=\\|ID_SERIAL=\\|MAJOR=\""
         usb_info_lines = os.popen(command).read().strip().splitlines()
+        matches = ""
 
-        vendor_id = usb_info_lines[0].strip().split()[1]
-        product_id = usb_info_lines[1].strip().split()[1]
-        serial_id = usb_info_lines[2].strip().split()[2]
-        if (serial_id == None):
-            log("No serial ID found for the device.")
+        for line in usb_info_lines:
+            name, value = line.strip().split("=",1)
+            if (matches): matches += ', '
+            matches += f'ENV{{{name}}}=="{value}"'
+ 
+        if (matches == None):
+            log("warning: No serial ID found for the device.")
             return False
 
         usb_rule = f"# {self._service_name}\n"
-        usb_rule += f'ACTION=="add", ENV{{ID_BUS}}=="usb", ENV{{ID_VENDOR_ID}}=="{vendor_id}", ENV{{ID_MODEL_ID}}=="{product_id}", ENV{{ID_SERIAL_SHORT}}=="{serial_id}", ENV{{VE_SERVICE}}="{self._serial_starter_config_mapping_name}"'
+        usb_rule += f'ACTION=="add", {matches}'
     
-        # save the rule to a file. which is used to add and uninstall the value
-    
+        # save the rule to a file. this will then be used to add and uninstall the value
         with open(self._serial_starter_rule_file, 'w') as file:
             file.write(usb_rule)
-    
+
         return True
 
     def _detect_inserted_serial_usb_device(self):
     
         counter = 0
         timeout_counter = 0
-
+            
         progress_header_msg = "Please connect the serial device (or remove and reconnect it) to the USB port."
         log(progress_header_msg)
         log("Waiting for USB device to be connected...")
@@ -148,9 +147,13 @@ class _usb_serial_helper:
                 for line in after_usb_devices:
                     if line not in before_usb_devices:
                         return line
-                break
+                            # for testing
             else:
                 before_usb_devices = after_usb_devices
+                if (timeout_counter == 4 and self._test_usb_id != None):
+                    for line in after_usb_devices:
+                        if (self._test_usb_id in line):
+                            return line 
 
             counter += 1
             if counter > 3: counter = 1
@@ -159,12 +162,12 @@ class _usb_serial_helper:
             if timeout_counter > 60: 
                 log("Timeout, exiting...")
                 return ""
+            
+
 
             update_msg = f"No new USB device detected, retrying{'.' * counter}  "
     
             log(update_msg, f"{progress_header_msg}\n{update_msg}", end='\r') #end just for terminal output
-    
-
 
     def _remove_string_with_newline_variants(self, source, string_to_remove):
 
@@ -260,11 +263,22 @@ class _usb_serial_helper:
 
         return True
 
+def log(msg, dbusMsg = None, end='\n'):
 
+    if _dbus_message_path:
+        if dbusMsg is None:
+            dbusMsg = msg
+
+        command = f"dbus-send --system --print-reply --dest={_dbus_message_path} com.victronenergy.BusItem.SetValue variant:string:{dbusMsg}"
+
+        os.popen(command).read()
+
+    print(msg, end=end)
+ 
 if __name__ == "__main__":
 
     print(sys.argv)
-    actions =sys.argv[1].split('.')
+    actions = sys.argv[1].split('.')
     match actions[0]:
         case "usb-serial-helper":
             usbsh = _usb_serial_helper()
@@ -272,3 +286,4 @@ if __name__ == "__main__":
             usbsh.executeAction(actions[1])
         case "":
             pass
+

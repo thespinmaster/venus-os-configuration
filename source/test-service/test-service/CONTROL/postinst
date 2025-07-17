@@ -1,14 +1,17 @@
 #!/bin/bash
 
+TEST_USB_ID="1a86:55d3"
+
 echo "postinst location:${0}" #//usr/lib/opkg/info/test-service.postinst
-SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
-echo "SCRIPT_DIR:${SCRIPT_DIR}"
-
+ 
 BASE_INSTALL_FILE_PATH=${0%.*} # strip file extension (.postinst)
+echo "BASE_INSTALL_FILE_PATH:${BASE_INSTALL_FILE_PATH}" #remove the extension from the filename
 
+SERVICE_NAME2=$("${BASE_INSTALL_FILE_PATH}".control | grep Package | cut -d" " -f2)
+echo "SN2:${SERVICE_NAME2}"
 SERVICE_NAME=$(basename "${0%.*}") #get file name without path
 echo "SERVICE_NAME:${SERVICE_NAME}" #remove the extension from the filename
-
+ 
 INSTALL_HELPER_SCRIPT_FILE="${BASE_INSTALL_FILE_PATH}.install-helper" 
 echo "INSTALL_HELPER_SCRIPT_FILE:${INSTALL_HELPER_SCRIPT_FILE}"
 
@@ -25,7 +28,9 @@ python "${INSTALL_HELPER_SCRIPT_FILE}"\
     "${SERIAL_STARTER_RULES_FILE}"\
     "${SERVICE_NAME}"\
     "${VE_SERVICE_MAPPING_NAME}"\
-    "${DBUS_MESSAGE_PATH}"
+    "${DBUS_MESSAGE_PATH}"\
+    "${TEST_USB_ID}"
+
 #fi
 
 # Declare service in serial starter conf file

@@ -1,0 +1,2 @@
+# test-service
+ACTION=="add", ENV{MAJOR}=="189", ENV{MINOR}=="272", ENV{ID_MODEL}=="USB_Serial", ENV{ID_SERIAL}=="1a86_USB_Serial", ENV{ID_VENDOR}=="1a86"

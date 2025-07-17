@@ -1,0 +1,17 @@
+#!/bin/bash
+
+@echo "${1}"
+
+# get the ipk name from the dir name this script
+# is located in
+IPK=$(basename "$(dirname "$(realpath "${0}")")")
+@echo "name:${IPK}"
+
+# see if the ipk is installed
+INSTALLED=$(opkg list-installed "${IPK}")
+@echo "Installed:${INSTALLED}"
+
+# if not installed then install
+if [ -z "${INSTALLED}" ]; then
+  opkg install ./"${IPK}"*.ipk
+fi

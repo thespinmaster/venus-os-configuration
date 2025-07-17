@@ -15,4 +15,4 @@
 app=/opt/victronenergy/test-service/main.py
 args="/dev/$tty"
 
-start -d -s $args
+start -d -s "$args"

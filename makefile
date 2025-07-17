@@ -17,7 +17,7 @@ dbus-ne-shunt:
 
 test-service:
 	@echo "building test-service"
-	cd ./feed && opkg-build ../source/test-service ./
+	cd ./feed && opkg-build ../source/test-service/test-service ./
 
 dbus-relay-board:
 	@echo "building dbus-relay-board"
