@@ -84,8 +84,8 @@ class _usb_serial_helper:
     
     def _create_serial_starter_rule(self):
         
-        print("sleeping...")
-        time.sleep(120)
+        #print("sleeping...")
+        #time.sleep(120)
         # Check if rule file already exists
         # the file /data/<service-name>/serial-starter.rule will already
         # exist if installed
@@ -241,6 +241,9 @@ class _usb_serial_helper:
         log("Rule added successfully.")
         return True
     
+    def _remove(self):
+        _remove_rule_from_serial_starter_rules_file()
+
     def _remove_rule_from_serial_starter_rules_file(self):
 
         if (not self._do_serial_starter_rule_files_exist()):
@@ -260,7 +263,8 @@ class _usb_serial_helper:
                 log(f"successfully removed rule from {self._serial_starter_rules_file}")
         else:
             log(f"warning rule not removed rule from {self._serial_starter_rules_file}")
-
+        
+        os.remove(self._serial_starter_rule_file)
         return True
 
 def log(msg, dbusMsg = None, end='\n'):

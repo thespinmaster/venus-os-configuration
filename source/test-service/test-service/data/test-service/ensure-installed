@@ -1,17 +1,37 @@
 #!/bin/bash
 
-@echo "${1}"
+
+ensure_writable() {
+  # Expand rootfs and make it writable
+  /opt/victronenergy/swupdate-scripts/resize2fs.sh
+}
+
+ensure_feed() {
+  FEED_CONFIG_FILE="/etc/opkg/thespinmaster.conf"
+  if [ ! -f $FEED_CONFIG_FILE ]; then
+    FEED_URL="https://github.com/thespinmaster/venus-os-configuration/raw/refs/heads/main/feed"
+    echo "src/gz thespinmaster ${FEED_URL} > ${FEED_CONFIG_FILE}"
+    opkg update 
+  fi
+}
+
+#echo "${1}"
 
 # get the ipk name from the dir name this script
 # is located in
 IPK=$(basename "$(dirname "$(realpath "${0}")")")
-@echo "name:${IPK}"
+#echo "name:${IPK}"
 
 # see if the ipk is installed
 INSTALLED=$(opkg list-installed "${IPK}")
-@echo "Installed:${INSTALLED}"
+#echo "Installed:${INSTALLED}"
 
 # if not installed then install
-if [ -z "${INSTALLED}" ]; then
-  opkg install ./"${IPK}"*.ipk
+if [ -n "${INSTALLED}" ]; then
+
+  ensure_writable
+  ensure_feed
+  opkg install "${IPK}"
+  
 fi
+

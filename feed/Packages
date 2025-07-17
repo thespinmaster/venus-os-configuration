@@ -33,10 +33,10 @@ Depends: python3
 Section: utilities
 Architecture: all
 Maintainer: thespinmaster@github.com
-MD5Sum: 805d31405b5a9f182045e412c1d9be70
-Size: 5656
+MD5Sum: 950ef72609350db2032ec34dd2878a6f
+Size: 6266
 Filename: test-service_1.0.0_all.ipk
-Source: https://github.com/thespinmaster/venus-os-configuration/tree/main/feed/test-service
+Source: https://github.com/thespinmaster/venus-os-configuration/raw/refs/heads/main/feed/test-service
 Description: A simple service for testing
 OE: einstine
 License: MIT

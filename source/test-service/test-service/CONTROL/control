@@ -7,5 +7,5 @@ Maintainer: thespinmaster@github.com
 License: MIT
 Architecture: all
 OE: einstine
-Source: https://github.com/thespinmaster/venus-os-configuration/tree/main/feed/test-service
+Source: https://github.com/thespinmaster/venus-os-configuration/raw/refs/heads/main/feed/test-service
 Depends: python3
